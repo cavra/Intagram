@@ -34,7 +34,6 @@ class LoginViewController: UIViewController {
                 print("Logged in")
                 self.performSegueWithIdentifier("loginSegue", sender: nil)
             }
-            
         }
     }
     

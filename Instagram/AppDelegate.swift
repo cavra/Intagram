@@ -14,13 +14,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         
-        // Initialize Parse
         // Set applicationId and server based on the values in the Heroku settings.
-        // clientKey is not used on Parse open source unless explicitly configured
         Parse.initializeWithConfiguration(
             ParseClientConfiguration(block: { (configuration:ParseMutableClientConfiguration) -> Void in
                 configuration.applicationId = "Instagram"
@@ -28,6 +25,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 configuration.server = "https://warm-harbor-12554.herokuapp.com/parse"
             })
         )
+        
+        // Check if user is already logged in
+        if PFUser.currentUser() != nil {
+            print("There is a current user")
+            
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController")
+            
+            window?.rootViewController = vc
+        }
+        
+        // Watch for if the user logs out
+        NSNotificationCenter.defaultCenter().addObserverForName("userLoggedOut", object: nil, queue: NSOperationQueue.mainQueue()) { (NSNotification) -> Void in
+            print("Logging out...")
+            
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc = storyboard.instantiateInitialViewController()
+            
+            self.window?.rootViewController = vc
+        }
+
         return true
     }
 
